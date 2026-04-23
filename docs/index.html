@@ -121,6 +121,10 @@
         .no-sort {
             cursor: default;
         }
+        /* keep date columns on a single line */
+        .nowrap {
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -206,17 +210,20 @@
 	    const shown = headers.filter(h => !hiddenFields.includes(h));
 	    let html = `<table><thead><tr>`;
 	    shown.forEach(h => {
-	        if(noSortFields.includes(h)) html += `<th class="no-sort">${h}</th>`;
-	        else {
+	        if(noSortFields.includes(h)) {
+	            // add nowrap class to date headers so the header itself doesn't wrap
+	            html += `<th class="no-sort${dateFields.includes(h)?' nowrap':''}">${h}</th>`;
+	        } else {
 	            const up = sortKey===h&&sortDir==='asc' ? '▲' : '△';
 	            const down = sortKey===h&&sortDir==='desc' ? '▼' : '▽';
-	            html += `<th data-field="${h}">${h}<span class="sort-handle ${sortKey===h&&sortDir==='asc'?'active':''}" data-dir="asc">${up}</span><span class="sort-handle ${sortKey===h&&sortDir==='desc'?'active':''}" data-dir="desc">${down}</span></th>`;
+	            // add nowrap class to date headers
+	            html += `<th data-field="${h}"${dateFields.includes(h)?' class="nowrap"':''}>${h}<span class="sort-handle ${sortKey===h&&sortDir==='asc'?'active':''}" data-dir="asc">${up}</span><span class="sort-handle ${sortKey===h&&sortDir==='desc'?'active':''}" data-dir="desc">${down}</span></th>`;
 	        }
 	    });
 	    html += `</tr></thead><tbody>`;
 	    rows.forEach(r => {
 	        html += '<tr>';
-	        shown.forEach(h => html += `<td>${r[h] || ''}</td>`);
+	        shown.forEach(h => html += `<td${dateFields.includes(h)?' class="nowrap"':''}>${r[h] || ''}</td>`);
 	        html += '</tr>';
 	    });
 	    html += '</tbody></table>';
