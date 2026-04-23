@@ -271,7 +271,7 @@
 	        const hidden = headers.includes("Date Order") ? ["Date Order"] : [];
 	        setRequiredParams(headers, hidden);
 	        const filtered = rows.filter(row => row['County'] && row['County'].toLowerCase().includes(countyName.toLowerCase()));
-	        if(!filtered.length){ container.innerHTML = `<em>No results for <strong>${countyName}</strong></em>`; return; }
+	        if(!filtered.length){ container.innerHTML = `<em>No annexation reports were found for <strong>${countyName} County.</strong></em>`; return; }
 	        let sortKey = "Date Order", sortDir = "asc";
 	        const shownRows = headers.includes("Date Order") ? sortRows(filtered, sortKey, sortDir) : filtered;
 	        container.innerHTML = `<h2>${countyName} County Annexation History</h2>`;
