@@ -126,7 +126,7 @@
 <body>
     <header>
 	<h1>Historical Annexations in Georgia</h1>
-       	<p>O.C.G.A § 36-36-3 (2024) states that annexation reports filed with the Georgia Department of Community Affairs must include a GIS file.<br> To assist local governments with compliance, the Department of Community Affairs released a web-based annexation reporting system.<br> The records in the table below represent reports filed with Georgia DCA prior to the system's release date: September 1, 2025.</p>
+        	<p>O.C.G.A § 36-36-3 (2024) states that annexation reports filed with the Georgia Department of Community Affairs must include a GIS file.<br> To assist local governments with compliance[...]</p>
     </header>
     <main>
 	<h3>Select a County</h3>
@@ -268,7 +268,11 @@
 	        const rows = parseCSV(await r.text());
 	        if(!rows.length){ container.innerHTML = `<em>No data found in historicannexations.csv.</em>`; return; }
 	        const headers = Object.keys(rows[0]);
-	        const hidden = headers.includes("Date Order") ? ["Date Order"] : [];
+	        // hide the user's requested short-name columns if they exist in the CSV
+	        const hidden = [];
+	        if(headers.includes("Date Order")) hidden.push("Date Order");
+	        const toHide = ["OrdDate","EffDate","RepDate","AuthNumber","Acr","Com"];
+	        toHide.forEach(h=>{ if(headers.includes(h)) hidden.push(h); });
 	        setRequiredParams(headers, hidden);
 	        const filtered = rows.filter(row => row['County'] && row['County'].toLowerCase().includes(countyName.toLowerCase()));
 	        if(!filtered.length){ container.innerHTML = `<em>No annexation reports were found for <strong>${countyName} County.</strong></em>`; return; }
@@ -292,7 +296,12 @@
 	            const lines = (await r.text()).trim().split(/\r?\n/).filter(Boolean);
 	            if(lines.length){
 	                const headers = lines[0].split(',').map(h=>h.trim());
-	                setRequiredParams(headers, headers.includes("Date Order") ? ["Date Order"] : []);
+	                // match the same hidden logic used when rendering the table
+	                const hidden = [];
+	                if(headers.includes("Date Order")) hidden.push("Date Order");
+	                const toHide = ["OrdDate","EffDate","RepDate","AuthNumber","Acr","Com"];
+	                toHide.forEach(h=>{ if(headers.includes(h)) hidden.push(h); });
+	                setRequiredParams(headers, hidden);
 	            }
 	        }
 	    }catch(e){}
